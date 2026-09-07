@@ -189,7 +189,7 @@ export function CinematicHero() {
 
         {/* Hero overlay (initial state) */}
         <motion.div
-          className="pointer-events-none absolute inset-0 flex items-center"
+          className="pointer-events-none absolute inset-0 flex items-start pt-32 lg:pt-40"
           style={{ opacity: heroOpacity, y: heroY }}
         >
           <div className="pointer-events-auto mx-auto w-full max-w-7xl px-5 lg:px-8">
