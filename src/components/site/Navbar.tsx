@@ -1,10 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, LogIn, Menu, X } from "lucide-react";
+import { ArrowRight, LogIn, Menu, ShoppingCart, X } from "lucide-react";
 import { Logo } from "./Logo";
 import { LoginModal } from "./LoginModal";
 import { useAuth } from "@/lib/auth";
 import { useSiteConfig } from "@/lib/site-text-context";
+import { useCart } from "@/lib/cart";
 
 const ALL_NAV = [
   { to: "/", slug: "accueil", label: "Accueil" },
@@ -21,6 +22,7 @@ export function Navbar() {
   const [loginOpen, setLoginOpen] = useState(false);
   const { user } = useAuth();
   const { pageVisibility } = useSiteConfig();
+  const { count } = useCart();
   const NAV = useMemo(
     () => ALL_NAV.filter((i) => pageVisibility[i.slug] !== false || Boolean(user)),
     [pageVisibility, user],
@@ -145,6 +147,15 @@ export function Navbar() {
                 className="btn-gradient flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold"
               >
                 Demander un devis <ArrowRight className="h-4 w-4" />
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/panier"
+                onClick={() => setOpen(false)}
+                className="btn-ghost-glow flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold"
+              >
+                <ShoppingCart className="h-4 w-4" /> Panier {count > 0 ? `(${count})` : ""}
               </Link>
             </li>
             <li>
