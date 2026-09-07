@@ -44,15 +44,15 @@ export function Navbar() {
           : "bg-transparent"
       }`}
     >
-      <nav className="mx-auto flex h-[78px] max-w-7xl items-center justify-between px-5 lg:h-[90px] lg:px-8">
+      <nav className="mx-auto flex h-[78px] max-w-[1440px] items-center justify-between gap-4 px-5 lg:h-[90px] lg:px-6 2xl:px-8">
         <Logo />
 
-        <ul className="hidden items-center gap-1 lg:flex">
+        <ul className="hidden min-w-0 items-center justify-center gap-0.5 lg:flex xl:gap-1">
           {NAV.map((item) => (
             <li key={item.to}>
               <Link
                 to={item.to}
-                className="group relative rounded-full px-4 py-2 text-sm font-medium text-white/75 transition-colors hover:text-white"
+                className="group relative block whitespace-nowrap rounded-full px-2.5 py-2 text-[13px] font-medium text-white/75 transition-colors hover:text-white xl:px-3 xl:text-sm 2xl:px-4"
                 activeProps={{ className: "text-white" }}
                 activeOptions={{ exact: item.to === "/" }}
               >
@@ -73,11 +73,11 @@ export function Navbar() {
           ))}
         </ul>
 
-        <div className="hidden items-center gap-2 lg:flex">
+        <div className="hidden shrink-0 items-center gap-2 lg:flex">
           {user ? (
             <Link
               to="/admin"
-              className="group relative inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white backdrop-blur-xl transition hover:border-[color:var(--brand-violet)]/60 hover:shadow-[0_0_25px_rgba(139,61,255,0.4)]"
+              className="group relative inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-white/15 bg-white/[0.04] px-3 py-2 text-sm font-semibold text-white backdrop-blur-xl transition hover:border-[color:var(--brand-violet)]/60 hover:shadow-[0_0_25px_rgba(139,61,255,0.4)] 2xl:px-4"
             >
               <span className="grid h-6 w-6 place-items-center rounded-full bg-[var(--gradient-brand)] text-[10px] font-black text-white">
                 {user.username.slice(0, 1)}
@@ -87,7 +87,7 @@ export function Navbar() {
           ) : (
             <button
               onClick={() => setLoginOpen(true)}
-              className="group relative inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-4 py-2 text-sm font-semibold text-white backdrop-blur-xl transition hover:border-[color:var(--brand-violet)]/60 hover:shadow-[0_0_25px_rgba(139,61,255,0.4)]"
+              className="group relative inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-white/15 bg-white/[0.04] px-3 py-2 text-sm font-semibold text-white backdrop-blur-xl transition hover:border-[color:var(--brand-violet)]/60 hover:shadow-[0_0_25px_rgba(139,61,255,0.4)] 2xl:px-4"
             >
               <LogIn className="h-4 w-4 opacity-80 transition group-hover:opacity-100" />
               Connexion
@@ -95,7 +95,7 @@ export function Navbar() {
           )}
           <Link
             to="/contact"
-            className="btn-gradient inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold"
+            className="btn-gradient inline-flex items-center gap-2 whitespace-nowrap rounded-full px-4 py-2.5 text-sm font-semibold 2xl:px-5"
           >
             Demander un devis
             <ArrowRight className="h-4 w-4" />
@@ -103,7 +103,7 @@ export function Navbar() {
           <Link
             to="/panier"
             aria-label="Panier"
-            className="relative inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-4 py-2.5 text-sm font-semibold text-white backdrop-blur-xl transition hover:border-[color:var(--brand-violet)]/60 hover:shadow-[0_0_25px_rgba(139,61,255,0.4)]"
+            className="relative inline-flex items-center gap-2 whitespace-nowrap rounded-full border border-white/15 bg-white/[0.04] px-3 py-2.5 text-sm font-semibold text-white backdrop-blur-xl transition hover:border-[color:var(--brand-violet)]/60 hover:shadow-[0_0_25px_rgba(139,61,255,0.4)] 2xl:px-4"
           >
             <ShoppingCart className="h-4 w-4" />
             Panier
