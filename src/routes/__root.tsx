@@ -143,8 +143,10 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <SiteTextProvider>
         <AuthProvider>
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-          <Outlet />
+          <CartProvider>
+            {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+            <Outlet />
+          </CartProvider>
         </AuthProvider>
       </SiteTextProvider>
     </QueryClientProvider>

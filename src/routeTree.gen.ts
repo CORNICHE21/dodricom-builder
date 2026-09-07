@@ -14,6 +14,7 @@ import { Route as AProposRouteImport } from './routes/a-propos'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as PanierRouteImport } from './routes/panier'
 import { Route as RealisationsRouteImport } from './routes/realisations'
 import { Route as SaasRouteImport } from './routes/saas'
 import { Route as ServicesRouteImport } from './routes/services'
@@ -51,6 +52,11 @@ const BlogRoute = BlogRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PanierRoute = PanierRouteImport.update({
+  id: '/panier',
+  path: '/panier',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RealisationsRoute = RealisationsRouteImport.update({
@@ -125,6 +131,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRouteWithChildren
   '/blog': typeof BlogRoute
   '/contact': typeof ContactRoute
+  '/panier': typeof PanierRoute
   '/realisations': typeof RealisationsRoute
   '/saas': typeof SaasRoute
   '/services': typeof ServicesRoute
@@ -144,6 +151,7 @@ export interface FileRoutesByTo {
   '/a-propos': typeof AProposRoute
   '/blog': typeof BlogRoute
   '/contact': typeof ContactRoute
+  '/panier': typeof PanierRoute
   '/realisations': typeof RealisationsRoute
   '/saas': typeof SaasRoute
   '/services': typeof ServicesRoute
@@ -165,6 +173,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRouteWithChildren
   '/blog': typeof BlogRoute
   '/contact': typeof ContactRoute
+  '/panier': typeof PanierRoute
   '/realisations': typeof RealisationsRoute
   '/saas': typeof SaasRoute
   '/services': typeof ServicesRoute
@@ -187,6 +196,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/blog'
     | '/contact'
+    | '/panier'
     | '/realisations'
     | '/saas'
     | '/services'
@@ -206,6 +216,7 @@ export interface FileRouteTypes {
     | '/a-propos'
     | '/blog'
     | '/contact'
+    | '/panier'
     | '/realisations'
     | '/saas'
     | '/services'
@@ -226,6 +237,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/blog'
     | '/contact'
+    | '/panier'
     | '/realisations'
     | '/saas'
     | '/services'
@@ -247,6 +259,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRouteWithChildren
   BlogRoute: typeof BlogRoute
   ContactRoute: typeof ContactRoute
+  PanierRoute: typeof PanierRoute
   RealisationsRoute: typeof RealisationsRoute
   SaasRoute: typeof SaasRoute
   ServicesRoute: typeof ServicesRoute
@@ -288,6 +301,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/panier': {
+      id: '/panier'
+      path: '/panier'
+      fullPath: '/panier'
+      preLoaderRoute: typeof PanierRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/realisations': {
@@ -416,6 +436,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRouteWithChildren,
   BlogRoute: BlogRoute,
   ContactRoute: ContactRoute,
+  PanierRoute: PanierRoute,
   RealisationsRoute: RealisationsRoute,
   SaasRoute: SaasRoute,
   ServicesRoute: ServicesRoute,
