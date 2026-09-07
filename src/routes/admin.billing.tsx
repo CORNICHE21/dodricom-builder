@@ -394,6 +394,8 @@ function BillingPage() {
         </button>
       </div>
 
+      {tab === "achats" && <PurchaseInvoices />}
+
       {tab === "documents" && (
         <div className="mt-4 glass overflow-hidden">
           <div className="flex flex-wrap items-center gap-2 border-b border-white/5 px-5 py-4">
