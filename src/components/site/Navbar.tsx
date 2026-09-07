@@ -1,10 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowRight, LogIn, Menu, X } from "lucide-react";
+import { ArrowRight, LogIn, Menu, ShoppingCart, X } from "lucide-react";
 import { Logo } from "./Logo";
 import { LoginModal } from "./LoginModal";
 import { useAuth } from "@/lib/auth";
 import { useSiteConfig } from "@/lib/site-text-context";
+import { useCart } from "@/lib/cart";
 
 const ALL_NAV = [
   { to: "/", slug: "accueil", label: "Accueil" },
@@ -21,6 +22,7 @@ export function Navbar() {
   const [loginOpen, setLoginOpen] = useState(false);
   const { user } = useAuth();
   const { pageVisibility } = useSiteConfig();
+  const { count } = useCart();
   const NAV = useMemo(
     () => ALL_NAV.filter((i) => pageVisibility[i.slug] !== false || Boolean(user)),
     [pageVisibility, user],
@@ -98,6 +100,19 @@ export function Navbar() {
             Demander un devis
             <ArrowRight className="h-4 w-4" />
           </Link>
+          <Link
+            to="/panier"
+            aria-label="Panier"
+            className="relative inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-4 py-2.5 text-sm font-semibold text-white backdrop-blur-xl transition hover:border-[color:var(--brand-violet)]/60 hover:shadow-[0_0_25px_rgba(139,61,255,0.4)]"
+          >
+            <ShoppingCart className="h-4 w-4" />
+            Panier
+            {count > 0 && (
+              <span className="grid h-5 min-w-5 place-items-center rounded-full bg-[var(--gradient-primary)] px-1 text-[10px] font-black text-white">
+                {count}
+              </span>
+            )}
+          </Link>
         </div>
 
         <button
@@ -132,6 +147,15 @@ export function Navbar() {
                 className="btn-gradient flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold"
               >
                 Demander un devis <ArrowRight className="h-4 w-4" />
+              </Link>
+            </li>
+            <li>
+              <Link
+                to="/panier"
+                onClick={() => setOpen(false)}
+                className="btn-ghost-glow flex items-center justify-center gap-2 rounded-full px-5 py-3 text-sm font-semibold"
+              >
+                <ShoppingCart className="h-4 w-4" /> Panier {count > 0 ? `(${count})` : ""}
               </Link>
             </li>
             <li>
