@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { Mail, MapPin, Phone, Clock, Facebook, Instagram, Linkedin, Youtube, ArrowRight, Check } from "lucide-react";
 import { SiteLayout, PageHeader } from "@/components/site/SiteLayout";
 import { useT, Txt, useCmsImage } from "@/lib/site-text-context";
@@ -17,6 +18,8 @@ export const Route = createFileRoute("/contact")({
 
 function ContactPage() {
   const [sent, setSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const t = useT("contact");
   const headerBg = useCmsImage("contact", "header.bg", heroContact);
 
@@ -91,8 +94,25 @@ function ContactPage() {
           <div className="lg:col-span-8">
             <form
               className="glass p-8 lg:p-10"
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
+                const formEl = e.currentTarget;
+                const fd = new FormData(formEl);
+                setSending(true);
+                setError(null);
+                const { error: insertError } = await supabase.from("contact_messages").insert({
+                  full_name: String(fd.get("name") ?? ""),
+                  email: String(fd.get("email") ?? ""),
+                  phone: (String(fd.get("phone") ?? "") || null) as string | null,
+                  subject: String(fd.get("subject") ?? ""),
+                  message: String(fd.get("message") ?? ""),
+                });
+                setSending(false);
+                if (insertError) {
+                  setError("L'envoi a échoué. Merci de réessayer.");
+                  return;
+                }
+                formEl.reset();
                 setSent(true);
               }}
             >
@@ -120,9 +140,14 @@ function ContactPage() {
               </label>
 
               <div className="mt-8 flex flex-wrap items-center gap-4">
-                <button type="submit" className="btn-gradient inline-flex items-center gap-2 rounded-full px-7 py-3 text-sm font-semibold">
+                <button
+                  type="submit"
+                  disabled={sending}
+                  className="btn-gradient inline-flex items-center gap-2 rounded-full px-7 py-3 text-sm font-semibold disabled:opacity-50"
+                >
                   <Txt page="contact" k="form.submit" /> <ArrowRight className="h-4 w-4" />
                 </button>
+                {error && <span className="text-sm text-red-300">{error}</span>}
                 {sent && (
                   <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-4 py-2 text-sm text-emerald-300">
                     <Check className="h-4 w-4" /> <Txt page="contact" k="form.success" />
