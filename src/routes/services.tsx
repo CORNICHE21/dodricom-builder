@@ -222,12 +222,22 @@ function ServicesPage() {
                     <p className="text-xl font-black gradient-text">
                       {formatPrice(p.price, p.currency)}
                     </p>
-                    <Link
-                      to="/contact"
-                      className="inline-flex items-center gap-1 text-xs font-semibold text-white/70 transition group-hover:text-white"
+                    <button
+                      onClick={() =>
+                        add({
+                          itemType: "product",
+                          itemId: p.id,
+                          slug: p.slug,
+                          name: p.name,
+                          unitPrice: p.price ?? 0,
+                          currency: p.currency,
+                          imageUrl: productImage(p.slug, p.imageUrl, p.categorySlug),
+                        })
+                      }
+                      className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 text-xs font-semibold text-white/80 transition hover:border-[color:var(--brand-violet)]/60 hover:text-white"
                     >
-                      <Txt page="services" k="products.cta" /> <ArrowRight className="h-3.5 w-3.5" />
-                    </Link>
+                      <ShoppingCart className="h-3.5 w-3.5" /> Ajouter
+                    </button>
                   </div>
                 </div>
               </article>
@@ -280,11 +290,27 @@ function ServicesPage() {
                   </li>
                 ))}
               </ul>
-              <Link
-                to="/contact"
+              <button
+                onClick={() =>
+                  add({
+                    itemType: "pack",
+                    itemId: pack.id,
+                    slug: pack.slug,
+                    name: pack.name,
+                    unitPrice: pack.price ?? 0,
+                    currency: pack.currency,
+                    imageUrl: null,
+                  })
+                }
                 className="btn-gradient mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full px-4 py-2.5 text-xs font-semibold"
               >
-                {pack.ctaLabel ?? t("packs.cta")} <ArrowRight className="h-3.5 w-3.5" />
+                <ShoppingCart className="h-3.5 w-3.5" /> {pack.ctaLabel ?? t("packs.cta")}
+              </button>
+              <Link
+                to="/panier"
+                className="mt-2 flex items-center justify-center gap-1 text-[11px] font-semibold text-white/55 transition hover:text-white"
+              >
+                Voir le panier <ArrowRight className="h-3 w-3" />
               </Link>
             </div>
           ))}
