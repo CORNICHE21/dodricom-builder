@@ -95,11 +95,11 @@ function MessagesPage() {
     await supabase.from("orders").update({ status }).eq("id", id);
   };
 
-  const updateMessageStatus = async (id: string, status: string) => {
+  const updateMessageStatus = async (id: string, status: (typeof MESSAGE_STATUSES)[number]) => {
     setMessages((prev) => prev.map((m) => (m.id === id ? { ...m, status } : m)));
     await supabase
       .from("contact_messages")
-      .update({ status: status as MessageRow["status"] })
+      .update({ status })
       .eq("id", id);
   };
 
