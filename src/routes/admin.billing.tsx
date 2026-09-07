@@ -372,7 +372,7 @@ function BillingPage() {
       )}
 
       <div className="mt-6 flex flex-wrap items-center gap-2">
-        {(["documents", "editor", "settings"] as Tab[]).map((t) => (
+        {(["documents", "editor", "achats", "settings"] as Tab[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -380,7 +380,13 @@ function BillingPage() {
               tab === t ? "btn-gradient" : "border border-white/10 bg-white/[0.04] text-white/60 hover:text-white"
             }`}
           >
-            {t === "documents" ? "Documents" : t === "editor" ? "Éditeur" : "Paramètres"}
+            {t === "documents"
+              ? "Documents"
+              : t === "editor"
+                ? "Éditeur"
+                : t === "achats"
+                  ? "Achats (IA)"
+                  : "Paramètres"}
           </button>
         ))}
         <button onClick={() => newDoc()} className={`${btn} ml-auto`}>
