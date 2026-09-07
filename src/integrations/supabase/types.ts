@@ -1784,6 +1784,89 @@ export type Database = {
         }
         Relationships: []
       }
+      site_visits: {
+        Row: {
+          city: string | null
+          country: string | null
+          created_at: string
+          device: string | null
+          id: string
+          last_seen_at: string
+          path: string
+          referrer: string | null
+          session_id: string
+          user_agent: string | null
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          device?: string | null
+          id?: string
+          last_seen_at?: string
+          path: string
+          referrer?: string | null
+          session_id: string
+          user_agent?: string | null
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          device?: string | null
+          id?: string
+          last_seen_at?: string
+          path?: string
+          referrer?: string | null
+          session_id?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
+      supplier_invoice_lines: {
+        Row: {
+          created_at: string
+          designation: string
+          id: string
+          invoice_id: string
+          quantity: number
+          sort_order: number
+          total: number
+          unit: string | null
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          designation: string
+          id?: string
+          invoice_id: string
+          quantity?: number
+          sort_order?: number
+          total?: number
+          unit?: string | null
+          unit_price?: number
+        }
+        Update: {
+          created_at?: string
+          designation?: string
+          id?: string
+          invoice_id?: string
+          quantity?: number
+          sort_order?: number
+          total?: number
+          unit?: string | null
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_invoice_lines_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       supplier_invoices: {
         Row: {
           attachment_url: string | null
@@ -1798,7 +1881,9 @@ export type Database = {
           pos_id: string | null
           reference: string
           status: string
+          supplier_ice: string | null
           supplier_id: string | null
+          supplier_name: string | null
           total_ht: number
           total_ttc: number
           total_vat: number
@@ -1818,7 +1903,9 @@ export type Database = {
           pos_id?: string | null
           reference: string
           status?: string
+          supplier_ice?: string | null
           supplier_id?: string | null
+          supplier_name?: string | null
           total_ht?: number
           total_ttc?: number
           total_vat?: number
@@ -1838,7 +1925,9 @@ export type Database = {
           pos_id?: string | null
           reference?: string
           status?: string
+          supplier_ice?: string | null
           supplier_id?: string | null
+          supplier_name?: string | null
           total_ht?: number
           total_ttc?: number
           total_vat?: number

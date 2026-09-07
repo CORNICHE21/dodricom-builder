@@ -7,6 +7,7 @@ import { MaintenanceScreen } from "./MaintenanceScreen";
 import { useScrollPageNav, PAGE_ORDER } from "@/lib/use-scroll-page-nav";
 import { CustomTexts, useSiteConfig } from "@/lib/site-text-context";
 import { useAuth } from "@/lib/auth";
+import { useVisitTracker } from "@/lib/use-visit-tracker";
 
 export function slugFromPath(pathname: string) {
   return pathname === "/" ? "accueil" : pathname.replace(/^\//, "").replace(/\/$/, "");
@@ -20,6 +21,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
   const { maintenance, pageVisibility } = useSiteConfig();
   const { user } = useAuth();
   const slug = slugFromPath(pathname);
+  useVisitTracker(pathname);
   const pageHidden = pageVisibility[slug] === false;
 
   const canBypassMaintenance =

@@ -1,0 +1,4 @@
+CREATE POLICY "staff read purchase files" ON storage.objects FOR SELECT TO authenticated USING (bucket_id = 'purchases' AND public.is_staff(auth.uid()));
+CREATE POLICY "staff upload purchase files" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'purchases' AND public.is_staff(auth.uid()));
+CREATE POLICY "staff update purchase files" ON storage.objects FOR UPDATE TO authenticated USING (bucket_id = 'purchases' AND public.is_staff(auth.uid()));
+CREATE POLICY "staff delete purchase files" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'purchases' AND public.is_staff(auth.uid()));
