@@ -568,6 +568,51 @@ export type Database = {
           },
         ]
       }
+      cart_items: {
+        Row: {
+          created_at: string
+          currency: string
+          email: string
+          id: string
+          image_url: string | null
+          item_id: string | null
+          item_type: string
+          name: string
+          quantity: number
+          slug: string | null
+          unit_price: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string
+          email: string
+          id?: string
+          image_url?: string | null
+          item_id?: string | null
+          item_type?: string
+          name: string
+          quantity?: number
+          slug?: string | null
+          unit_price?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          email?: string
+          id?: string
+          image_url?: string | null
+          item_id?: string | null
+          item_type?: string
+          name?: string
+          quantity?: number
+          slug?: string | null
+          unit_price?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       contact_messages: {
         Row: {
           company: string | null
@@ -1151,6 +1196,109 @@ export type Database = {
           {
             foreignKeyName: "media_assets_uploaded_by_fkey"
             columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      order_items: {
+        Row: {
+          created_at: string
+          id: string
+          item_id: string | null
+          item_type: string
+          name: string
+          order_id: string
+          quantity: number
+          slug: string | null
+          total: number
+          unit_price: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          item_id?: string | null
+          item_type?: string
+          name: string
+          order_id: string
+          quantity?: number
+          slug?: string | null
+          total?: number
+          unit_price?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          item_id?: string | null
+          item_type?: string
+          name?: string
+          order_id?: string
+          quantity?: number
+          slug?: string | null
+          total?: number
+          unit_price?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          company: string | null
+          created_at: string
+          currency: string
+          email: string
+          full_name: string | null
+          handled_by: string | null
+          id: string
+          note: string | null
+          number: string
+          phone: string | null
+          status: string
+          total: number
+          updated_at: string
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          currency?: string
+          email: string
+          full_name?: string | null
+          handled_by?: string | null
+          id?: string
+          note?: string | null
+          number: string
+          phone?: string | null
+          status?: string
+          total?: number
+          updated_at?: string
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          currency?: string
+          email?: string
+          full_name?: string | null
+          handled_by?: string | null
+          id?: string
+          note?: string | null
+          number?: string
+          phone?: string | null
+          status?: string
+          total?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_handled_by_fkey"
+            columns: ["handled_by"]
             isOneToOne: false
             referencedRelation: "profiles"
             referencedColumns: ["id"]
