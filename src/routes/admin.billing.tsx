@@ -13,6 +13,7 @@ import {
   X,
 } from "lucide-react";
 import { AdminShell, StatCard } from "@/components/admin/AdminShell";
+import { PurchaseInvoices } from "@/components/admin/billing/PurchaseInvoices";
 import { supabase } from "@/integrations/supabase/client";
 import {
   DEFAULT_PRINT_OPTIONS,
