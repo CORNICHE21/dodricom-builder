@@ -21,6 +21,7 @@ export function SiteLayout({ children }: { children: ReactNode }) {
   const { maintenance, pageVisibility } = useSiteConfig();
   const { user } = useAuth();
   const slug = slugFromPath(pathname);
+  useVisitTracker(pathname);
   const pageHidden = pageVisibility[slug] === false;
 
   const canBypassMaintenance =
