@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AuthProvider } from "../lib/auth";
 import { SiteTextProvider, siteTextsQuery } from "../lib/site-text-context";
+import { CartProvider } from "../lib/cart";
 
 function NotFoundComponent() {
   return (
