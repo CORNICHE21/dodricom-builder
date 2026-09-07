@@ -16,12 +16,14 @@ import {
   Network,
   Rocket,
   Shield,
+  ShoppingCart,
   Zap,
 } from "lucide-react";
 import { SiteLayout } from "@/components/site/SiteLayout";
 import { useT, Txt } from "@/lib/site-text-context";
 import { getServicesContent } from "@/lib/content.functions";
 import { categoryImage, productImage } from "@/lib/content-images";
+import { useCart } from "@/lib/cart";
 
 const servicesQuery = queryOptions({
   queryKey: ["services-content"],
@@ -78,6 +80,7 @@ function formatPrice(price: number | null, currency: string, period?: string | n
 function ServicesPage() {
   const { data } = useSuspenseQuery(servicesQuery);
   const t = useT("services");
+  const { add } = useCart();
   const { categories, products, packages } = data;
   const BENEFITS = BENEFIT_ICONS.map((icon, i) => ({
     icon,
