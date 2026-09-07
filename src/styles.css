@@ -1,0 +1,334 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --font-sans: "Inter", "Poppins", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Poppins", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/*
+ * Design system definition.
+ *
+ * The @theme inline block maps CSS custom properties to Tailwind utility
+ * classes (e.g. --color-primary -> bg-primary, text-primary).
+ *
+ * The :root and .dark blocks define the actual color values using oklch.
+ * All colors MUST use oklch format.
+ *
+ * To add a new semantic color:
+ * 1. Add the variable to :root (light value) and .dark (dark value)
+ * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+  --radius-3xl: calc(var(--radius) + 12px);
+  --radius-4xl: calc(var(--radius) + 16px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ring-offset-background: var(--background);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --radius: 1.25rem;
+  /* Dodricom dark palette */
+  --background: oklch(0.09 0.02 275);
+  --foreground: oklch(0.98 0.005 260);
+  --card: oklch(0.13 0.03 275 / 0.6);
+  --card-foreground: oklch(0.98 0.005 260);
+  --popover: oklch(0.11 0.03 275);
+  --popover-foreground: oklch(0.98 0.005 260);
+  --primary: oklch(0.62 0.24 295);
+  --primary-foreground: oklch(0.99 0 0);
+  --secondary: oklch(0.18 0.04 275);
+  --secondary-foreground: oklch(0.98 0 0);
+  --muted: oklch(0.18 0.03 275);
+  --muted-foreground: oklch(0.75 0.02 270);
+  --accent: oklch(0.65 0.2 250);
+  --accent-foreground: oklch(0.99 0 0);
+  --destructive: oklch(0.65 0.25 25);
+  --destructive-foreground: oklch(0.99 0 0);
+  --border: oklch(1 0 0 / 0.08);
+  --input: oklch(1 0 0 / 0.1);
+  --ring: oklch(0.65 0.24 290);
+  --chart-1: oklch(0.65 0.24 295);
+  --chart-2: oklch(0.65 0.2 250);
+  --chart-3: oklch(0.75 0.18 220);
+  --chart-4: oklch(0.6 0.22 320);
+  --chart-5: oklch(0.7 0.2 200);
+  --sidebar: oklch(0.1 0.02 275);
+  --sidebar-foreground: oklch(0.98 0.005 260);
+  --sidebar-primary: oklch(0.62 0.24 295);
+  --sidebar-primary-foreground: oklch(0.99 0 0);
+  --sidebar-accent: oklch(0.18 0.03 275);
+  --sidebar-accent-foreground: oklch(0.98 0 0);
+  --sidebar-border: oklch(1 0 0 / 0.08);
+  --sidebar-ring: oklch(0.65 0.24 290);
+
+  /* Brand tokens */
+  --brand-violet: #8B3DFF;
+  --brand-blue: #2979FF;
+  --brand-cyan: #39D5FF;
+  --brand-bg: #05060A;
+  --brand-text-muted: #B8B8B8;
+
+  --gradient-primary: linear-gradient(135deg, #8B3DFF 0%, #2979FF 100%);
+  --gradient-brand: linear-gradient(135deg, #8B3DFF 0%, #5A50FF 45%, #2979FF 100%);
+  --gradient-text: linear-gradient(135deg, #B47CFF 0%, #7EA6FF 50%, #39D5FF 100%);
+  --gradient-radial: radial-gradient(circle at 30% 20%, rgba(139,61,255,0.35), transparent 55%),
+                     radial-gradient(circle at 80% 60%, rgba(41,121,255,0.28), transparent 60%);
+
+  --shadow-glow: 0 0 40px rgba(139, 61, 255, 0.35), 0 0 80px rgba(41, 121, 255, 0.2);
+  --shadow-glow-strong: 0 0 60px rgba(139, 61, 255, 0.55), 0 10px 40px rgba(41, 121, 255, 0.35);
+  --shadow-card: 0 20px 60px -20px rgba(0,0,0,0.6), inset 0 1px 0 0 rgba(255,255,255,0.05);
+}
+
+.dark {
+  color-scheme: dark;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  body {
+    background-color: #05060A;
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(139, 61, 255, 0.18), transparent 45%),
+      radial-gradient(circle at 85% 30%, rgba(41, 121, 255, 0.16), transparent 50%),
+      radial-gradient(circle at 50% 90%, rgba(57, 213, 255, 0.10), transparent 55%);
+    background-attachment: fixed;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+}
+
+@utility glass {
+  background: linear-gradient(135deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  backdrop-filter: blur(20px) saturate(140%);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow-card);
+}
+
+@utility glass-strong {
+  background: linear-gradient(135deg, rgba(20,10,40,0.75), rgba(10,10,25,0.65));
+  backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255,255,255,0.10);
+  border-radius: 1.5rem;
+}
+
+@utility gradient-text {
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility btn-gradient {
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: 0 8px 30px rgba(139, 61, 255, 0.4);
+  transition: transform .25s ease, box-shadow .25s ease, filter .25s ease;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(139, 61, 255, 0.6);
+    filter: brightness(1.08);
+  }
+}
+
+@utility btn-ghost-glow {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.14);
+  color: white;
+  transition: all .25s ease;
+  &:hover {
+    border-color: rgba(139, 61, 255, 0.7);
+    box-shadow: 0 0 30px rgba(139, 61, 255, 0.35);
+  }
+}
+
+@utility glow {
+  box-shadow: var(--shadow-glow);
+}
+
+@utility card-hover {
+  transition: transform .35s ease, box-shadow .35s ease, border-color .35s ease;
+  &:hover {
+    transform: translateY(-6px);
+    border-color: rgba(139, 61, 255, 0.5);
+    box-shadow: 0 20px 60px -10px rgba(139, 61, 255, 0.35);
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes marquee-x {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@utility animate-marquee-x {
+  animation: marquee-x 28s linear infinite;
+}
+
+/* Bande de logos partenaires : défilement continu, très fluide, pause au survol */
+.logo-marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+}
+.logo-marquee-track {
+  animation: marquee-x 42s linear infinite;
+  will-change: transform;
+}
+.logo-marquee:hover .logo-marquee-track {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .logo-marquee-track { animation: none; }
+}
+
+
+@utility animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+@utility animate-pulse-glow {
+  animation: pulse-glow 3s ease-in-out infinite;
+}
+@utility animate-fade-up {
+  animation: fade-up 0.8s ease-out both;
+}
+
+/* ---- Impression / export PDF des documents de facturation ---- */
+@media print {
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+  }
+
+  /*
+   * On supprime du flux tout élément qui n'est ni un ancêtre ni un
+   * descendant du document à imprimer : évite les pages blanches
+   * créées par le contenu de l'admin (visibility:hidden garde la place).
+   */
+  body *:not(:has(.print-root)):not(.print-root):not(.print-root *) {
+    display: none !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-modal {
+    position: static !important;
+    inset: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: none !important;
+    backdrop-filter: none !important;
+    overflow: visible !important;
+    max-width: none !important;
+    width: auto !important;
+    height: auto !important;
+  }
+
+  /* Conserve les couleurs de fond (bandeaux cyan, pied de page bleu nuit…) */
+  .print-root,
+  .print-root * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .print-root {
+    display: block !important;
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print-page {
+    width: 210mm !important;
+    height: 296.8mm !important; /* légèrement < 297mm pour éviter le débordement d'une page blanche */
+    margin: 0 !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    break-after: page;
+    page-break-after: always;
+  }
+  .print-page:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  @page {
+    size: A4;
+    margin: 0;
+  }
+}
+
