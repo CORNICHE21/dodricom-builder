@@ -2,7 +2,9 @@
 
 export type GeminiPart = { text: string } | { inlineData: { mimeType: string; data: string } };
 
-export const GEMINI_MODEL = "gemini-2.5-flash";
+export const GEMINI_MODEL = "gemini-3.6-flash";
+/** Used automatically when the main model is temporarily overloaded. */
+export const GEMINI_FALLBACK_MODEL = "gemini-flash-latest";
 
 /** Convert a data URL (data:image/png;base64,xxx) into a Gemini inlineData part. */
 export function dataUrlToPart(dataUrl: string): GeminiPart {
