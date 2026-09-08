@@ -84,10 +84,10 @@ export const runCmsAi = createServerFn({ method: "POST" })
     return { prompt: input.prompt.trim().slice(0, 2000), pageSlug: input.pageSlug };
   })
   .handler(async ({ data, context }): Promise<CmsAiResult> => {
-    const apiKey = process.env["LOVABLE_API_KEY"];
-    if (!apiKey) throw new Error("IA indisponible : clé manquante.");
+    const { generateText } = await import("./gemini.server");
     const supabase = context.supabase;
     const { pageSlug } = data;
+
 
     const [textsRes, settingsRes, pagesRes, partnersRes] = await Promise.all([
       supabase.from("content_texts").select("text_key, value, style").eq("page_slug", pageSlug),
