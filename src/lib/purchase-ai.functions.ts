@@ -54,45 +54,23 @@ export const extractPurchaseDocument = createServerFn({ method: "POST" })
     return { parts, note: String(input?.note ?? "").slice(0, 500) };
   })
   .handler(async ({ data }): Promise<PurchaseExtraction> => {
-    const apiKey = process.env["LOVABLE_API_KEY"];
-    if (!apiKey) throw new Error("IA indisponible : clé manquante.");
+    const { generateText, dataUrlToPart } = await import("./gemini.server");
 
-    const content: unknown[] = [
+    const parts = [
       {
-        type: "text",
         text:
           `Extrais les données de cette facture d'achat.` +
           (data.note ? ` Précision : ${data.note}.` : "") +
           ` Zones fournies : ${data.parts.map((p) => p.field).join(", ")}.`,
       },
-    ];
+    ] as Awaited<ReturnType<typeof dataUrlToPart>>[];
     for (const p of data.parts) {
-      content.push({ type: "text", text: `Zone « ${p.field} » :` });
-      content.push({ type: "image_url", image_url: { url: p.image } });
+      parts.push({ text: `Zone « ${p.field} » :` });
+      parts.push(dataUrlToPart(p.image));
     }
 
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Lovable-API-Key": apiKey,
-        "X-Lovable-AIG-SDK": "fetch",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3.6-flash",
-        messages: [
-          { role: "system", content: SYSTEM },
-          { role: "user", content },
-        ],
-      }),
-    });
+    const raw = await generateText({ system: SYSTEM, parts, json: true });
 
-    if (res.status === 429) throw new Error("Trop de requêtes IA, réessayez dans un instant.");
-    if (res.status === 402) throw new Error("Crédits IA épuisés.");
-    if (!res.ok) throw new Error(`Erreur IA (${res.status}) : ${(await res.text()).slice(0, 200)}`);
-
-    const json = (await res.json()) as { choices?: { message?: { content?: string } }[] };
-    const raw = json.choices?.[0]?.message?.content ?? "";
     const match = raw.match(/\{[\s\S]*\}/);
     if (!match) throw new Error("L'IA n'a pas pu lire le document.");
     let parsed: Record<string, unknown>;

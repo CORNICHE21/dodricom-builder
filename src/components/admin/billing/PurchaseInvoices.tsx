@@ -78,7 +78,7 @@ export function PurchaseInvoices() {
       .select("*")
       .order("created_at", { ascending: false });
     if (e) setError(e.message);
-    setRows(((data ?? []) as unknown as Row[]) ?? []);
+    setRows((data ?? []) as unknown as Row[]);
   };
   useEffect(() => {
     void load();

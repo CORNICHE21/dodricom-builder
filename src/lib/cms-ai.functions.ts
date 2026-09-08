@@ -84,10 +84,10 @@ export const runCmsAi = createServerFn({ method: "POST" })
     return { prompt: input.prompt.trim().slice(0, 2000), pageSlug: input.pageSlug };
   })
   .handler(async ({ data, context }): Promise<CmsAiResult> => {
-    const apiKey = process.env["LOVABLE_API_KEY"];
-    if (!apiKey) throw new Error("IA indisponible : clé manquante.");
+    const { generateText } = await import("./gemini.server");
     const supabase = context.supabase;
     const { pageSlug } = data;
+
 
     const [textsRes, settingsRes, pagesRes, partnersRes] = await Promise.all([
       supabase.from("content_texts").select("text_key, value, style").eq("page_slug", pageSlug),
@@ -117,29 +117,14 @@ export const runCmsAi = createServerFn({ method: "POST" })
       maintenance,
     };
 
-
-    const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Lovable-API-Key": apiKey,
-        "X-Lovable-AIG-SDK": "fetch",
-      },
-      body: JSON.stringify({
-        model: "google/gemini-3.6-flash",
-        messages: [
-          { role: "system", content: SYSTEM },
-          { role: "user", content: `Contenu actuel :\n${JSON.stringify(ctxDoc)}\n\nDemande : ${data.prompt}` },
-        ],
-      }),
+    const raw = await generateText({
+      system: SYSTEM,
+      parts: [
+        { text: `Contenu actuel :\n${JSON.stringify(ctxDoc)}\n\nDemande : ${data.prompt}` },
+      ],
+      json: true,
     });
 
-    if (res.status === 429) throw new Error("Trop de requêtes IA, réessayez dans un instant.");
-    if (res.status === 402) throw new Error("Crédits IA épuisés.");
-    if (!res.ok) throw new Error(`Erreur IA (${res.status}) : ${(await res.text()).slice(0, 200)}`);
-
-    const payload = (await res.json()) as { choices?: { message?: { content?: string } }[] };
-    const raw = payload.choices?.[0]?.message?.content ?? "";
     const parsed = extractJson(raw);
     const actions = (parsed.actions ?? []) as CmsAiAction[];
     const applied: string[] = [];
