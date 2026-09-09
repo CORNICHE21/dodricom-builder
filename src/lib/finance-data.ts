@@ -191,6 +191,65 @@ export function useSaveEntry() {
   });
 }
 
+/** Génère en base plusieurs écritures dérivées (ventes, achats, dépenses, banque…). */
+export function useGenerateEntries() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (
+      entries: {
+        source_type: string;
+        source_id: string;
+        entry_date: string;
+        journal_code: string;
+        piece_number: string | null;
+        label: string;
+        party_name: string | null;
+        pos_id: string | null;
+        lines: { account_code: string; label: string; debit: number; credit: number }[];
+      }[],
+    ) => {
+      let created = 0;
+      for (const e of entries) {
+        const totalDebit = e.lines.reduce((s, l) => s + Number(l.debit || 0), 0);
+        const totalCredit = e.lines.reduce((s, l) => s + Number(l.credit || 0), 0);
+        const { data, error } = await supabase
+          .from("accounting_entries")
+          .insert({
+            entry_date: e.entry_date,
+            journal_code: e.journal_code,
+            piece_number: e.piece_number,
+            label: e.label,
+            party_name: e.party_name,
+            source_type: e.source_type,
+            source_id: e.source_id,
+            pos_id: e.pos_id,
+            total_debit: totalDebit,
+            total_credit: totalCredit,
+            is_posted: true,
+          } as never)
+          .select("id")
+          .single();
+        if (error) throw error;
+        const entryId = (data as { id: string }).id;
+        const { error: lerr } = await supabase.from("accounting_entry_lines").insert(
+          e.lines.map((l, i) => ({
+            entry_id: entryId,
+            account_code: l.account_code,
+            label: l.label,
+            debit: l.debit,
+            credit: l.credit,
+            sort_order: i,
+          })) as never,
+        );
+        if (lerr) throw lerr;
+        created += 1;
+      }
+      return created;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: FINANCE_QUERY_KEY }),
+  });
+}
+
 /** Export CSV téléchargé côté navigateur. */
 export function exportCsv(filename: string, rows: (string | number)[][]) {
   const csv = rows
