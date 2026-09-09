@@ -71,6 +71,8 @@ export function FinanceAccounting({
   const save = useSaveRow();
   const del = useDeleteRow();
   const saveEntry = useSaveEntry();
+  const generate = useGenerateEntries();
+  const pending = useMemo(() => pendingEntries(data), [data]);
 
   const [acc, setAcc] = useState<Partial<AccountingAccount> | null>(null);
   const [jr, setJr] = useState<Partial<AccountingJournal> | null>(null);
@@ -309,6 +311,64 @@ export function FinanceAccounting({
                       </div>
                     )}
                   </Td>
+                </tr>
+              );
+            })}
+          </DataTable>
+        </Panel>
+      )}
+
+      {tab === "auto" && (
+        <Panel
+          title="Mouvements à comptabiliser"
+          actions={
+            canEdit && (
+              <button
+                className={btnPrimary}
+                disabled={pending.length === 0 || generate.isPending}
+                onClick={async () => {
+                  try {
+                    const n = await generate.mutateAsync(pending);
+                    toast.success(`${n} écriture(s) générée(s)`);
+                  } catch (e) {
+                    toast.error((e as Error).message);
+                  }
+                }}
+              >
+                {generate.isPending
+                  ? "Génération…"
+                  : `Générer ${pending.length} écriture(s)`}
+              </button>
+            )
+          }
+        >
+          <p className="mb-4 text-xs text-white/50">
+            Chaque vente, encaissement, facture fournisseur, dépense, salaire et mouvement de
+            banque ou de caisse est converti en écriture équilibrée. Les mouvements déjà
+            comptabilisés n'apparaissent plus ici.
+          </p>
+          <DataTable
+            head={["Date", "Origine", "Journal", "Pièce", "Libellé", "Écriture", "Montant"]}
+            empty={pending.length === 0}
+          >
+            {pending.map((e) => {
+              const b = entryBalanced(e.lines);
+              return (
+                <tr key={`${e.source_type}:${e.source_id}`}>
+                  <Td>{e.entry_date}</Td>
+                  <Td>{SOURCE_LABELS[e.source_type] ?? e.source_type}</Td>
+                  <Td>{e.journal_code}</Td>
+                  <Td>{e.piece_number || "—"}</Td>
+                  <Td className="max-w-[220px] truncate">{e.label}</Td>
+                  <Td className="whitespace-normal text-xs text-white/60">
+                    {e.lines.map((l, i) => (
+                      <span key={i} className="mr-2 inline-block">
+                        {l.account_code} {l.debit > 0 ? "D" : "C"}{" "}
+                        {fmt(l.debit > 0 ? l.debit : l.credit, currency)}
+                      </span>
+                    ))}
+                  </Td>
+                  <Td>{fmt(b.debit, currency)}</Td>
                 </tr>
               );
             })}
