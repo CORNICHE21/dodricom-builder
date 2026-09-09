@@ -15,7 +15,14 @@ import {
   inputCls,
 } from "./ui";
 import type { Scope, Selectors } from "./scope";
-import { useDeleteRow, useSaveEntry, useSaveRow, exportCsv } from "@/lib/finance-data";
+import {
+  useDeleteRow,
+  useGenerateEntries,
+  useSaveEntry,
+  useSaveRow,
+  exportCsv,
+} from "@/lib/finance-data";
+import { pendingEntries, SOURCE_LABELS } from "@/lib/finance-entries";
 import {
   entryBalanced,
   num,
@@ -26,12 +33,20 @@ import {
   type FiscalPeriod,
 } from "@/lib/finance";
 
-type Tab = "plan" | "journaux" | "ecritures" | "grand-livre" | "balance" | "exercices";
+type Tab =
+  | "plan"
+  | "journaux"
+  | "ecritures"
+  | "auto"
+  | "grand-livre"
+  | "balance"
+  | "exercices";
 
 const TABS: { key: Tab; label: string }[] = [
   { key: "plan", label: "Plan comptable" },
   { key: "journaux", label: "Journaux" },
   { key: "ecritures", label: "Écritures" },
+  { key: "auto", label: "Journalisation auto" },
   { key: "grand-livre", label: "Grand livre" },
   { key: "balance", label: "Balance" },
   { key: "exercices", label: "Exercices" },
