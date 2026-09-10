@@ -354,44 +354,60 @@ export function FinanceAccounting({
           }
         >
           <DataTable
-            head={["Date", "Journal", "Pièce", "Libellé", "Tiers", "Débit", "Crédit", "État", ""]}
+            head={["Date", "Journal", "Pièce", "Compte", "Libellé", "Tiers", "Débit", "Crédit", ""]}
             empty={entriesInRange.length === 0}
           >
             {entriesInRange.map((e) => {
-              const b = entryBalanced(linesOf(e.id));
-              return (
-                <tr key={e.id}>
-                  <Td>{e.entry_date}</Td>
-                  <Td>{e.journal_code}</Td>
-                  <Td>{e.piece_number ?? "—"}</Td>
-                  <Td className="max-w-[220px] truncate">{e.label}</Td>
-                  <Td>{e.party_name ?? "—"}</Td>
-                  <Td>{fmt(b.debit, currency)}</Td>
-                  <Td>{fmt(b.credit, currency)}</Td>
-                  <Td>
-                    {b.balanced ? (
-                      <Badge label="Équilibrée" cls="bg-emerald-400/15 text-emerald-200" />
+              const ls = linesOf(e.id);
+              const b = entryBalanced(ls);
+              const rows = ls.length ? ls : [null];
+              return rows.map((l, i) => (
+                <tr key={`${e.id}:${i}`} className={i > 0 ? "" : "border-t border-white/10"}>
+                  <Td className={i > 0 ? "text-white/30" : ""}>{i === 0 ? e.entry_date : ""}</Td>
+                  <Td>{i === 0 ? e.journal_code : ""}</Td>
+                  <Td>{i === 0 ? (e.piece_number ?? "—") : ""}</Td>
+                  <Td className="font-semibold text-white">
+                    {l ? (
+                      <>
+                        {l.account_code}
+                        <span className="ml-1 text-[10px] font-normal text-white/40">
+                          {data.chart.find((c) => c.code === l.account_code)?.label ?? ""}
+                        </span>
+                      </>
                     ) : (
-                      <Badge label="Déséquilibrée" cls="bg-rose-400/15 text-rose-200" />
+                      "—"
                     )}
                   </Td>
+                  <Td className="max-w-[220px] truncate">
+                    {l ? l.label || e.label : e.label}
+                  </Td>
+                  <Td>{i === 0 ? (e.party_name ?? "—") : ""}</Td>
+                  <Td>{l && num(l.debit) ? fmt(l.debit, currency) : l ? "" : fmt(b.debit, currency)}</Td>
+                  <Td>{l && num(l.credit) ? fmt(l.credit, currency) : l ? "" : fmt(b.credit, currency)}</Td>
                   <Td>
-                    {canEdit && (
-                      <div className="flex gap-2">
-                        <button className={btnCls} onClick={() => openEntry(e)}>
-                          Éditer
-                        </button>
-                        <button
-                          className={btnCls}
-                          onClick={() => del.mutate({ table: "accounting_entries", id: e.id })}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </button>
+                    {i === 0 && (
+                      <div className="flex items-center gap-2">
+                        {!b.balanced && (
+                          <Badge label="Déséquilibrée" cls="bg-rose-400/15 text-rose-200" />
+                        )}
+                        {canEdit && (
+                          <>
+                            <button className={btnCls} onClick={() => openEntry(e)}>
+                              Éditer
+                            </button>
+                            <button
+                              className={btnCls}
+                              onClick={() => del.mutate({ table: "accounting_entries", id: e.id })}
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </>
+                        )}
                       </div>
                     )}
                   </Td>
                 </tr>
-              );
+              ));
             })}
           </DataTable>
         </Panel>
