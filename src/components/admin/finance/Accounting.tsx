@@ -873,6 +873,13 @@ export function FinanceAccounting({
               </span>
             )}
           </div>
+
+          {aiNote && (
+            <p className="mt-3 rounded-xl border border-white/10 bg-white/[0.04] p-3 text-xs text-white/70">
+              <Sparkles className="mr-1.5 inline h-3.5 w-3.5" />
+              {aiNote}
+            </p>
+          )}
         </Modal>
       )}
 
