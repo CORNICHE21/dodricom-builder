@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
-import { AlertTriangle, Plus, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { AlertTriangle, Loader2, Plus, Sparkles, Trash2 } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import {
   Badge,
