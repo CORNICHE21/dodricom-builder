@@ -399,35 +399,52 @@ export function FinanceAccounting({
 
       {tab === "auto" && (
         <Panel
-          title="Mouvements à comptabiliser"
+          title="Comptabilisation automatique"
           actions={
             canEdit && (
-              <button
-                className={btnPrimary}
-                disabled={pending.length === 0 || generate.isPending}
-                onClick={async () => {
-                  try {
-                    const n = await generate.mutateAsync(pending);
-                    toast.success(`${n} écriture(s) générée(s)`);
-                  } catch (e) {
-                    toast.error((e as Error).message);
-                  }
-                }}
-              >
-                {generate.isPending
-                  ? "Génération…"
-                  : `Générer ${pending.length} écriture(s)`}
-              </button>
+              <div className="flex flex-wrap items-center gap-3">
+                <label className="inline-flex items-center gap-2 text-xs text-white/70">
+                  <input
+                    type="checkbox"
+                    checked={autoPost}
+                    onChange={(e) => {
+                      setAutoPost(e.target.checked);
+                      failed.current = false;
+                      localStorage.setItem(
+                        "dodricom.finance.autopost",
+                        e.target.checked ? "1" : "0",
+                      );
+                    }}
+                  />
+                  Automatique
+                </label>
+                <button
+                  className={btnPrimary}
+                  disabled={pending.length === 0 || generate.isPending}
+                  onClick={async () => {
+                    try {
+                      failed.current = false;
+                      const n = await generate.mutateAsync(pending);
+                      toast.success(`${n} écriture(s) générée(s)`);
+                    } catch (e) {
+                      toast.error((e as Error).message);
+                    }
+                  }}
+                >
+                  {generate.isPending ? "Génération…" : `Comptabiliser ${pending.length}`}
+                </button>
+              </div>
             )
           }
         >
           <p className="mb-4 text-xs text-white/50">
             Chaque vente, encaissement, facture fournisseur, dépense, salaire et mouvement de
-            banque ou de caisse est converti en écriture équilibrée. Les mouvements déjà
-            comptabilisés n'apparaissent plus ici.
+            banque ou de caisse devient une écriture équilibrée dès son enregistrement. Décochez
+            « Automatique » pour vérifier ou modifier chaque écriture avant de la comptabiliser :
+            le bouton « Modifier » ouvre l'écriture proposée, avec l'assistant IA si besoin.
           </p>
           <DataTable
-            head={["Date", "Origine", "Journal", "Pièce", "Libellé", "Écriture", "Montant"]}
+            head={["Date", "Origine", "Journal", "Pièce", "Libellé", "Écriture", "Montant", ""]}
             empty={pending.length === 0}
           >
             {pending.map((e) => {
