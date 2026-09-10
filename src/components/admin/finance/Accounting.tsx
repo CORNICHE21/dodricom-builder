@@ -465,6 +465,13 @@ export function FinanceAccounting({
                     ))}
                   </Td>
                   <Td>{fmt(b.debit, currency)}</Td>
+                  <Td>
+                    {canEdit && (
+                      <button className={btnCls} onClick={() => openDerived(e)}>
+                        Modifier
+                      </button>
+                    )}
+                  </Td>
                 </tr>
               );
             })}
