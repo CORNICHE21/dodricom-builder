@@ -1,5 +1,6 @@
-import { useMemo, useState } from "react";
-import { AlertTriangle, Plus, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { AlertTriangle, Loader2, Plus, Sparkles, Trash2 } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import {
   Badge,
@@ -22,7 +23,8 @@ import {
   useSaveRow,
   exportCsv,
 } from "@/lib/finance-data";
-import { pendingEntries, SOURCE_LABELS } from "@/lib/finance-entries";
+import { pendingEntries, SOURCE_LABELS, type DerivedEntry } from "@/lib/finance-entries";
+import { suggestEntryLines } from "@/lib/accounting-ai.functions";
 import {
   entryBalanced,
   num,
@@ -79,6 +81,83 @@ export function FinanceAccounting({
   const [per, setPer] = useState<Partial<FiscalPeriod> | null>(null);
   const [entry, setEntry] = useState<Partial<AccountingEntry> | null>(null);
   const [lines, setLines] = useState<LineDraft[]>([]);
+
+  /* --------- comptabilisation automatique (activable/désactivable) --------- */
+  const [autoPost, setAutoPost] = useState(true);
+  useEffect(() => {
+    setAutoPost(localStorage.getItem("dodricom.finance.autopost") !== "0");
+  }, []);
+  const busy = useRef(false);
+  const failed = useRef(false);
+  useEffect(() => {
+    if (!autoPost || !canEdit || pending.length === 0 || busy.current || failed.current) return;
+    busy.current = true;
+    const batch = pending;
+    generate
+      .mutateAsync(batch)
+      .then((n) => {
+        if (n) toast.success(`${n} mouvement(s) comptabilisé(s) automatiquement`);
+      })
+      .catch((e) => {
+        failed.current = true;
+        toast.error((e as Error).message);
+      })
+      .finally(() => {
+        busy.current = false;
+      });
+  }, [autoPost, canEdit, pending, generate]);
+
+  /* ------------------------------- assistant IA ------------------------------ */
+  const askAi = useServerFn(suggestEntryLines);
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiNote, setAiNote] = useState<string | null>(null);
+
+  async function runAi() {
+    if (!entry) return;
+    const description = [entry.label, entry.party_name, entry.piece_number]
+      .filter(Boolean)
+      .join(" — ");
+    if (description.trim().length < 3)
+      return toast.error("Décrivez d'abord le mouvement dans le libellé.");
+    setAiBusy(true);
+    setAiNote(null);
+    try {
+      const res = await askAi({
+        data: {
+          description,
+          journalCodes: data.journals.map((j) => j.code),
+          accounts: data.chart.map((c) => ({ code: c.code, label: c.label })),
+          currentLines: lines,
+        },
+      });
+      if (res.lines.length) setLines(res.lines);
+      if (res.journal_code) setEntry((p) => (p ? { ...p, journal_code: res.journal_code! } : p));
+      setAiNote(res.note);
+      toast.success("Proposition de l'IA appliquée — vérifiez avant d'enregistrer.");
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setAiBusy(false);
+    }
+  }
+
+  /** Ouvre une écriture dérivée en édition avant enregistrement. */
+  function openDerived(d: DerivedEntry) {
+    setAiNote(null);
+    setEntry({
+      entry_date: d.entry_date,
+      journal_code: d.journal_code,
+      piece_number: d.piece_number ?? "",
+      label: d.label,
+      party_name: d.party_name ?? "",
+      pos_id: d.pos_id,
+      is_posted: true,
+      source_type: d.source_type,
+      source_id: d.source_id,
+    } as Partial<AccountingEntry>);
+    setLines(d.lines.map((l) => ({ ...l })));
+  }
+
 
   const entriesInRange = useMemo(
     () => data.entries.filter((e) => sel.transactions || true).filter((e) => e.entry_date),
@@ -320,35 +399,52 @@ export function FinanceAccounting({
 
       {tab === "auto" && (
         <Panel
-          title="Mouvements à comptabiliser"
+          title="Comptabilisation automatique"
           actions={
             canEdit && (
-              <button
-                className={btnPrimary}
-                disabled={pending.length === 0 || generate.isPending}
-                onClick={async () => {
-                  try {
-                    const n = await generate.mutateAsync(pending);
-                    toast.success(`${n} écriture(s) générée(s)`);
-                  } catch (e) {
-                    toast.error((e as Error).message);
-                  }
-                }}
-              >
-                {generate.isPending
-                  ? "Génération…"
-                  : `Générer ${pending.length} écriture(s)`}
-              </button>
+              <div className="flex flex-wrap items-center gap-3">
+                <label className="inline-flex items-center gap-2 text-xs text-white/70">
+                  <input
+                    type="checkbox"
+                    checked={autoPost}
+                    onChange={(e) => {
+                      setAutoPost(e.target.checked);
+                      failed.current = false;
+                      localStorage.setItem(
+                        "dodricom.finance.autopost",
+                        e.target.checked ? "1" : "0",
+                      );
+                    }}
+                  />
+                  Automatique
+                </label>
+                <button
+                  className={btnPrimary}
+                  disabled={pending.length === 0 || generate.isPending}
+                  onClick={async () => {
+                    try {
+                      failed.current = false;
+                      const n = await generate.mutateAsync(pending);
+                      toast.success(`${n} écriture(s) générée(s)`);
+                    } catch (e) {
+                      toast.error((e as Error).message);
+                    }
+                  }}
+                >
+                  {generate.isPending ? "Génération…" : `Comptabiliser ${pending.length}`}
+                </button>
+              </div>
             )
           }
         >
           <p className="mb-4 text-xs text-white/50">
             Chaque vente, encaissement, facture fournisseur, dépense, salaire et mouvement de
-            banque ou de caisse est converti en écriture équilibrée. Les mouvements déjà
-            comptabilisés n'apparaissent plus ici.
+            banque ou de caisse devient une écriture équilibrée dès son enregistrement. Décochez
+            « Automatique » pour vérifier ou modifier chaque écriture avant de la comptabiliser :
+            le bouton « Modifier » ouvre l'écriture proposée, avec l'assistant IA si besoin.
           </p>
           <DataTable
-            head={["Date", "Origine", "Journal", "Pièce", "Libellé", "Écriture", "Montant"]}
+            head={["Date", "Origine", "Journal", "Pièce", "Libellé", "Écriture", "Montant", ""]}
             empty={pending.length === 0}
           >
             {pending.map((e) => {
@@ -369,6 +465,13 @@ export function FinanceAccounting({
                     ))}
                   </Td>
                   <Td>{fmt(b.debit, currency)}</Td>
+                  <Td>
+                    {canEdit && (
+                      <button className={btnCls} onClick={() => openDerived(e)}>
+                        Modifier
+                      </button>
+                    )}
+                  </Td>
                 </tr>
               );
             })}
@@ -649,6 +752,14 @@ export function FinanceAccounting({
           wide
           footer={
             <>
+              <button className={btnCls} onClick={runAi} disabled={aiBusy}>
+                {aiBusy ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Sparkles className="h-3.5 w-3.5" />
+                )}
+                Proposer avec l'IA
+              </button>
               <button className={btnCls} onClick={() => setEntry(null)}>
                 Annuler
               </button>
@@ -762,6 +873,13 @@ export function FinanceAccounting({
               </span>
             )}
           </div>
+
+          {aiNote && (
+            <p className="mt-3 rounded-xl border border-white/10 bg-white/[0.04] p-3 text-xs text-white/70">
+              <Sparkles className="mr-1.5 inline h-3.5 w-3.5" />
+              {aiNote}
+            </p>
+          )}
         </Modal>
       )}
 
