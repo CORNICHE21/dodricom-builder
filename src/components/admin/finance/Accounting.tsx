@@ -23,7 +23,8 @@ import {
   useSaveRow,
   exportCsv,
 } from "@/lib/finance-data";
-import { pendingEntries, SOURCE_LABELS } from "@/lib/finance-entries";
+import { pendingEntries, SOURCE_LABELS, type DerivedEntry } from "@/lib/finance-entries";
+import { suggestEntryLines } from "@/lib/accounting-ai.functions";
 import {
   entryBalanced,
   num,
