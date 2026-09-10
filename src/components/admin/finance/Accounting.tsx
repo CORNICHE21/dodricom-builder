@@ -82,6 +82,83 @@ export function FinanceAccounting({
   const [entry, setEntry] = useState<Partial<AccountingEntry> | null>(null);
   const [lines, setLines] = useState<LineDraft[]>([]);
 
+  /* --------- comptabilisation automatique (activable/désactivable) --------- */
+  const [autoPost, setAutoPost] = useState(true);
+  useEffect(() => {
+    setAutoPost(localStorage.getItem("dodricom.finance.autopost") !== "0");
+  }, []);
+  const busy = useRef(false);
+  const failed = useRef(false);
+  useEffect(() => {
+    if (!autoPost || !canEdit || pending.length === 0 || busy.current || failed.current) return;
+    busy.current = true;
+    const batch = pending;
+    generate
+      .mutateAsync(batch)
+      .then((n) => {
+        if (n) toast.success(`${n} mouvement(s) comptabilisé(s) automatiquement`);
+      })
+      .catch((e) => {
+        failed.current = true;
+        toast.error((e as Error).message);
+      })
+      .finally(() => {
+        busy.current = false;
+      });
+  }, [autoPost, canEdit, pending, generate]);
+
+  /* ------------------------------- assistant IA ------------------------------ */
+  const askAi = useServerFn(suggestEntryLines);
+  const [aiBusy, setAiBusy] = useState(false);
+  const [aiNote, setAiNote] = useState<string | null>(null);
+
+  async function runAi() {
+    if (!entry) return;
+    const description = [entry.label, entry.party_name, entry.piece_number]
+      .filter(Boolean)
+      .join(" — ");
+    if (description.trim().length < 3)
+      return toast.error("Décrivez d'abord le mouvement dans le libellé.");
+    setAiBusy(true);
+    setAiNote(null);
+    try {
+      const res = await askAi({
+        data: {
+          description,
+          journalCodes: data.journals.map((j) => j.code),
+          accounts: data.chart.map((c) => ({ code: c.code, label: c.label })),
+          currentLines: lines,
+        },
+      });
+      if (res.lines.length) setLines(res.lines);
+      if (res.journal_code) setEntry((p) => (p ? { ...p, journal_code: res.journal_code! } : p));
+      setAiNote(res.note);
+      toast.success("Proposition de l'IA appliquée — vérifiez avant d'enregistrer.");
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setAiBusy(false);
+    }
+  }
+
+  /** Ouvre une écriture dérivée en édition avant enregistrement. */
+  function openDerived(d: DerivedEntry) {
+    setAiNote(null);
+    setEntry({
+      entry_date: d.entry_date,
+      journal_code: d.journal_code,
+      piece_number: d.piece_number ?? "",
+      label: d.label,
+      party_name: d.party_name ?? "",
+      pos_id: d.pos_id,
+      is_posted: true,
+      source_type: d.source_type,
+      source_id: d.source_id,
+    } as Partial<AccountingEntry>);
+    setLines(d.lines.map((l) => ({ ...l })));
+  }
+
+
   const entriesInRange = useMemo(
     () => data.entries.filter((e) => sel.transactions || true).filter((e) => e.entry_date),
     [data.entries, sel.transactions],
