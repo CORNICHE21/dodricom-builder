@@ -752,6 +752,14 @@ export function FinanceAccounting({
           wide
           footer={
             <>
+              <button className={btnCls} onClick={runAi} disabled={aiBusy}>
+                {aiBusy ? (
+                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                ) : (
+                  <Sparkles className="h-3.5 w-3.5" />
+                )}
+                Proposer avec l'IA
+              </button>
               <button className={btnCls} onClick={() => setEntry(null)}>
                 Annuler
               </button>
