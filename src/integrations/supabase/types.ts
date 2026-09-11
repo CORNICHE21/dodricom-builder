@@ -613,6 +613,163 @@ export type Database = {
         }
         Relationships: []
       }
+      client_apps: {
+        Row: {
+          app_id: string
+          client_id: string
+          created_at: string
+        }
+        Insert: {
+          app_id: string
+          client_id: string
+          created_at?: string
+        }
+        Update: {
+          app_id?: string
+          client_id?: string
+          created_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_apps_app_id_fkey"
+            columns: ["app_id"]
+            isOneToOne: false
+            referencedRelation: "saas_apps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "client_apps_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "saas_clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      companies: {
+        Row: {
+          address: string | null
+          city: string | null
+          country: string | null
+          created_at: string
+          email: string | null
+          end_date: string | null
+          ice: string | null
+          id: string
+          legal_name: string | null
+          logo_url: string | null
+          name: string
+          notes: string | null
+          phone: string | null
+          start_date: string | null
+          status: string
+          storage_limit_mb: number
+          storage_used_mb: number
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          end_date?: string | null
+          ice?: string | null
+          id?: string
+          legal_name?: string | null
+          logo_url?: string | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          start_date?: string | null
+          status?: string
+          storage_limit_mb?: number
+          storage_used_mb?: number
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          end_date?: string | null
+          ice?: string | null
+          id?: string
+          legal_name?: string | null
+          logo_url?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          start_date?: string | null
+          status?: string
+          storage_limit_mb?: number
+          storage_used_mb?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      company_users: {
+        Row: {
+          company_id: string | null
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          is_active: boolean
+          phone: string | null
+          profile_id: string | null
+          role_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          company_id?: string | null
+          created_at?: string
+          email?: string | null
+          full_name: string
+          id?: string
+          is_active?: boolean
+          phone?: string | null
+          profile_id?: string | null
+          role_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          is_active?: boolean
+          phone?: string | null
+          profile_id?: string | null
+          role_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_users_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_users_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_users_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "saas_roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contact_messages: {
         Row: {
           company: string | null
@@ -1504,6 +1661,72 @@ export type Database = {
         }
         Relationships: []
       }
+      plan_apps: {
+        Row: {
+          app_id: string
+          created_at: string
+          plan_id: string
+        }
+        Insert: {
+          app_id: string
+          created_at?: string
+          plan_id: string
+        }
+        Update: {
+          app_id?: string
+          created_at?: string
+          plan_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_apps_app_id_fkey"
+            columns: ["app_id"]
+            isOneToOne: false
+            referencedRelation: "saas_apps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_apps_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "saas_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plan_services: {
+        Row: {
+          created_at: string
+          plan_id: string
+          service_id: string
+        }
+        Insert: {
+          created_at?: string
+          plan_id: string
+          service_id: string
+        }
+        Update: {
+          created_at?: string
+          plan_id?: string
+          service_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_services_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "saas_plans"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "plan_services_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "saas_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       pos_locations: {
         Row: {
           address: string | null
@@ -1709,6 +1932,269 @@ export type Database = {
           },
         ]
       }
+      role_permissions: {
+        Row: {
+          created_at: string
+          role_id: string
+          service_id: string
+        }
+        Insert: {
+          created_at?: string
+          role_id: string
+          service_id: string
+        }
+        Update: {
+          created_at?: string
+          role_id?: string
+          service_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "role_permissions_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "saas_roles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "role_permissions_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "saas_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saas_apps: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          is_active: boolean
+          name: string
+          sort_order: number
+          updated_at: string
+          version: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          sort_order?: number
+          updated_at?: string
+          version?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          sort_order?: number
+          updated_at?: string
+          version?: string
+        }
+        Relationships: []
+      }
+      saas_clients: {
+        Row: {
+          address: string | null
+          city: string | null
+          company_id: string | null
+          country: string | null
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          notes: string | null
+          phone: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          company_id?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          full_name: string
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          company_id?: string | null
+          country?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          notes?: string | null
+          phone?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saas_clients_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      saas_plans: {
+        Row: {
+          code: string
+          created_at: string
+          currency: string
+          description: string | null
+          id: string
+          is_active: boolean
+          max_users: number
+          name: string
+          period: string
+          price: number
+          sort_order: number
+          storage_mb: number
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          max_users?: number
+          name: string
+          period?: string
+          price?: number
+          sort_order?: number
+          storage_mb?: number
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          currency?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          max_users?: number
+          name?: string
+          period?: string
+          price?: number
+          sort_order?: number
+          storage_mb?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      saas_roles: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          id: string
+          is_system: boolean
+          name: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_system?: boolean
+          name: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_system?: boolean
+          name?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      saas_services: {
+        Row: {
+          app_id: string
+          code: string
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          name: string
+          parent_id: string | null
+          route: string | null
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          app_id: string
+          code: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name: string
+          parent_id?: string | null
+          route?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          app_id?: string
+          code?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          name?: string
+          parent_id?: string | null
+          route?: string | null
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saas_services_app_id_fkey"
+            columns: ["app_id"]
+            isOneToOne: false
+            referencedRelation: "saas_apps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saas_services_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "saas_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_categories: {
         Row: {
           accent: string | null
@@ -1822,6 +2308,199 @@ export type Database = {
           user_agent?: string | null
         }
         Relationships: []
+      }
+      subscription_invoices: {
+        Row: {
+          amount_ht: number
+          amount_ttc: number
+          client_id: string | null
+          created_at: string
+          currency: string
+          due_date: string | null
+          id: string
+          issue_date: string
+          notes: string | null
+          number: string
+          status: string
+          subscription_id: string | null
+          updated_at: string
+          vat_rate: number
+        }
+        Insert: {
+          amount_ht?: number
+          amount_ttc?: number
+          client_id?: string | null
+          created_at?: string
+          currency?: string
+          due_date?: string | null
+          id?: string
+          issue_date?: string
+          notes?: string | null
+          number: string
+          status?: string
+          subscription_id?: string | null
+          updated_at?: string
+          vat_rate?: number
+        }
+        Update: {
+          amount_ht?: number
+          amount_ttc?: number
+          client_id?: string | null
+          created_at?: string
+          currency?: string
+          due_date?: string | null
+          id?: string
+          issue_date?: string
+          notes?: string | null
+          number?: string
+          status?: string
+          subscription_id?: string | null
+          updated_at?: string
+          vat_rate?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_invoices_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "saas_clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscription_invoices_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscription_payments: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          invoice_id: string | null
+          method: string
+          note: string | null
+          paid_at: string
+          reference: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          id?: string
+          invoice_id?: string | null
+          method?: string
+          note?: string | null
+          paid_at?: string
+          reference?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          invoice_id?: string | null
+          method?: string
+          note?: string | null
+          paid_at?: string
+          reference?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscription_payments_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "subscription_invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      subscriptions: {
+        Row: {
+          app_id: string | null
+          client_id: string | null
+          company_id: string | null
+          created_at: string
+          currency: string
+          end_date: string | null
+          id: string
+          notes: string | null
+          period: string
+          plan_id: string | null
+          price: number
+          renewed_at: string | null
+          start_date: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          app_id?: string | null
+          client_id?: string | null
+          company_id?: string | null
+          created_at?: string
+          currency?: string
+          end_date?: string | null
+          id?: string
+          notes?: string | null
+          period?: string
+          plan_id?: string | null
+          price?: number
+          renewed_at?: string | null
+          start_date?: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          app_id?: string | null
+          client_id?: string | null
+          company_id?: string | null
+          created_at?: string
+          currency?: string
+          end_date?: string | null
+          id?: string
+          notes?: string | null
+          period?: string
+          plan_id?: string | null
+          price?: number
+          renewed_at?: string | null
+          start_date?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_app_id_fkey"
+            columns: ["app_id"]
+            isOneToOne: false
+            referencedRelation: "saas_apps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "saas_clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "saas_plans"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       supplier_invoice_lines: {
         Row: {
@@ -2128,6 +2807,39 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_service_permissions: {
+        Row: {
+          company_user_id: string
+          created_at: string
+          service_id: string
+        }
+        Insert: {
+          company_user_id: string
+          created_at?: string
+          service_id: string
+        }
+        Update: {
+          company_user_id?: string
+          created_at?: string
+          service_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_service_permissions_company_user_id_fkey"
+            columns: ["company_user_id"]
+            isOneToOne: false
+            referencedRelation: "company_users"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "user_service_permissions_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "saas_services"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
